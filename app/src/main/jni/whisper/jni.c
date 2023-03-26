@@ -214,3 +214,10 @@ Java_com_elishaazaria_sayboard_ime_recognizers_WhisperLib_getTextSegment(
     jstring string = (*env)->NewStringUTF(env, text);
     return string;
 }
+
+JNIEXPORT int JNICALL
+Java_com_elishaazaria_sayboard_ime_recognizers_WhisperLib_getSampleRate(
+        JNIEnv *env, jobject thiz) {
+    UNUSED(thiz);
+    return WHISPER_SAMPLE_RATE;
+}

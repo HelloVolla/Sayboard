@@ -27,6 +27,7 @@ class WhisperLib {
     public static native void fullTranscribe(long contextPtr, float[] audioData);
     public static native int getTextSegmentCount(long contextPtr);
     public static native String getTextSegment(long contextPtr, int index);
+    public static native int getSampleRate();
 
     private static final String LOG_TAG = "LibWhisper";
 
@@ -87,6 +88,8 @@ public class WhisperLocal implements RecognizerSource {
 
         Handler handler = new Handler(Looper.getMainLooper());
         executor.execute(() -> {
+            // TODO: Initialize Whisper with the target languages and
+            // Additional features
             Long context = WhisperLib.initContext(localModel.path);
             handler.post(() -> {
                 modelLoaded(context);
@@ -98,16 +101,18 @@ public class WhisperLocal implements RecognizerSource {
     private void modelLoaded(long context) {
         this.whisperContext = context;
         stateLD.postValue(RecognizerState.READY);
-        recognizer = new WhisperRecognizer(context, 16000.0f);
+        recognizer = new WhisperRecognizer(context, WhisperLib.getSampleRate());
     }
 
     private static class WhisperRecognizer implements Recognizer {
         private final float sampleRate;
         private final long whisperContext;
+        private String result;
 
         public WhisperRecognizer(long context, float sampleRate) {
             this.sampleRate = sampleRate;
             this.whisperContext = context;
+            this.result = "";
         }
 
         @Override
@@ -117,26 +122,45 @@ public class WhisperLocal implements RecognizerSource {
 
         @Override
         public void reset() {
+            result = "";
         }
 
         @Override
         public boolean acceptWaveForm(short[] buffer, int nread) {
-            return false;
+            float floatBuffer[] = new float[nread];
+            for (int i = 0; i < buffer.length; i++) {
+                floatBuffer[i] = ((float)buffer[i]) / 32767.0f;
+            }
+
+            // TODO: Expose additional functions in WhisperLib that allow
+            // partial translations and correcting history and
+            // show alternative translations
+            WhisperLib.fullTranscribe(whisperContext, floatBuffer);
+
+            int textSegmentCount = WhisperLib.getTextSegmentCount(whisperContext);
+            // TODO: Use StringBuilder here
+            for (int i = 0; i < textSegmentCount; i++) {
+                result += WhisperLib.getTextSegment(whisperContext, i);
+                result += ' ';
+            }
+
+
+            return true;
         }
 
         @Override
         public String getResult() {
-            return "";
+            return result;
         }
 
         @Override
         public String getPartialResult() {
-            return "";
+            return result;
         }
 
         @Override
         public String getFinalResult() {
-            return "";
+            return result;
         }
     }
 
