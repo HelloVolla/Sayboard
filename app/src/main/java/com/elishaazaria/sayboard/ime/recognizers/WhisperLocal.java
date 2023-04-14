@@ -35,6 +35,8 @@ class WhisperLib {
         return Build.SUPPORTED_ABIS[0].equals("armeabi-v7a");
     }
 
+    private boolean isArmEabiV8a() { return Build.SUPPORTED_ABIS[0].equals("arm64-v8a"); }
+
     private String cpuInfo() {
         try {
             BufferedReader br = new BufferedReader(new FileReader("/proc/cpuinfo"));
@@ -57,6 +59,9 @@ class WhisperLib {
         if (isArmEabiV7a() && info.contains("vfpv4")) {
             Log.i(LOG_TAG, "Loading libwhisper_vfpv4.so");
             System.loadLibrary("whisper_vfpv4");
+        } else if (isArmEabiV8a() && info.contains("fphp")) {
+            Log.i(LOG_TAG, "Loading libwhisper_v8fp16_va.so");
+            System.loadLibrary("whisper_v8fp16_va");
         } else {
             Log.i(LOG_TAG, "Loading libwhisper.so");
             System.loadLibrary("whisper");

@@ -11,7 +11,7 @@ android {
     compileSdkVersion 32
     defaultConfig {
         applicationId "com.elishaazaria.sayboard"
-        minSdkVersion 26
+        minSdkVersion 28
         targetSdkVersion 32
         versionCode 3
         versionName "v2.0.1"
@@ -20,7 +20,7 @@ android {
         }
     }
 
-    ndkVersion "25.1.8937393"
+    ndkVersion "25.2.9519653"
     externalNativeBuild {
         ndkBuild {
             path 'src/main/jni/whisper/Android.mk'
