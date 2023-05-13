@@ -8,11 +8,13 @@ public class LocalModel implements Serializable {
     public final String path;
     public final Locale locale;
     public final String filename;
+    public final LocalModelType modelType;
 
-    public LocalModel(String path, Locale locale, String filename) {
+    public LocalModel(String path, Locale locale, String filename, LocalModelType modelType) {
         this.path = path;
         this.locale = locale;
         this.filename = filename;
+        this.modelType = modelType;
     }
 
     public String serialize() {

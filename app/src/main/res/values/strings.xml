@@ -60,6 +60,9 @@
     <string name="dialog_add_vosk_server_add">Add</string>
     <string name="dialog_add_vosk_server_cancel">Cancel</string>
 
+    <string name="vosk">Vosk</string>
+    <string name="whisper">Whisper</string>
+
     <!-- UI Preferences -->
     <string name="ui_light_theme_foreground_material_you_title">Use Material You foreground color</string>
     <string name="ui_light_theme_foreground_color_title">Foreground color</string>

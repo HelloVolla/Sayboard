@@ -25,12 +25,14 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.FileChannel;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.Executor;
@@ -111,18 +113,33 @@ public class FileDownloadService extends Service {
 
         Log.d(TAG, "Finished downloading");
 
-        try {
-            unzipFile(downloadLocation);
-        } catch (IOException e) {
-            e.printStackTrace();
-            setError(e.getMessage());
-            mainEnd();
-            return;
+        if (downloadLocation.getPath().endsWith(".zip")) {
+            try {
+                unzipFile(downloadLocation);
+            } catch (IOException e) {
+                e.printStackTrace();
+                setError(e.getMessage());
+                mainEnd();
+                return;
+            }
+
+            Log.d(TAG, "Finished unzipping");
+            downloadLocation.delete();
+        } else {
+            File modelDestinationDirectory = Constants.getDirectoryForModel(getApplicationContext(), currentModel.locale);
+            if (!modelDestinationDirectory.exists()) {
+                modelDestinationDirectory.mkdirs();
+            }
+
+            try {
+                moveFile(downloadLocation, modelDestinationDirectory);
+            } catch (IOException e){
+                e.printStackTrace();
+                setError(e.getMessage());
+                mainEnd();
+                return;
+            }
         }
-
-        Log.d(TAG, "Finished unzipping");
-
-        downloadLocation.delete();
 
         setState(State.FINISHED);
 
@@ -138,6 +155,23 @@ public class FileDownloadService extends Service {
 
         if (queuedModels.isEmpty())
             stopForeground(false);
+    }
+
+    private void moveFile(File file, File dir) throws IOException {
+        File newFile = new File(dir, file.getName());
+        FileChannel outputChannel = null;
+        FileChannel inputChannel = null;
+        try {
+            outputChannel = new FileOutputStream(newFile).getChannel();
+            inputChannel = new FileInputStream(file).getChannel();
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel);
+            inputChannel.close();
+            file.delete();
+        } finally {
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
+        }
+
     }
 
     private void downloadFile(File downloadLocation) throws IOException {

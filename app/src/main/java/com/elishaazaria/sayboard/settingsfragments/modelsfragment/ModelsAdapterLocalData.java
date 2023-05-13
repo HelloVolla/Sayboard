@@ -88,9 +88,7 @@ public class ModelsAdapterLocalData implements ModelsAdapterData {
     }
 
     @Override
-    public String getTitle() {
-        return getLocale().getDisplayName();
-    }
+    public String getTitle() { return getModelLink().getDisplayName(); }
 
     @Override
     public String getSubtitle() {

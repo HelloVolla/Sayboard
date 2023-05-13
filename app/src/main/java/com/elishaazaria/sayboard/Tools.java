@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.core.content.ContextCompat;
 
 import com.elishaazaria.sayboard.data.LocalModel;
+import com.elishaazaria.sayboard.data.LocalModelType;
 import com.elishaazaria.sayboard.data.ModelLink;
 import com.elishaazaria.sayboard.settingsfragments.modelsfragment.ModelsAdapterLocalData;
 
@@ -24,6 +25,8 @@ import java.util.Locale;
 import java.util.Map;
 
 public class Tools {
+
+    public static final String GGML = "ggml-";
 
     public static boolean isMicrophonePermissionGranted(Activity activity) {
         int permissionCheck = ContextCompat.checkSelfPermission(activity.getApplicationContext(),
@@ -93,15 +96,21 @@ public class Tools {
 
         if (!modelsDir.exists()) return localeMap;
 
-        for (File localeFolder : modelsDir.listFiles()) {
-            if (!localeFolder.isDirectory()) continue;
-            Locale locale = Locale.forLanguageTag(localeFolder.getName());
+        for (File modelsDirEntry : modelsDir.listFiles()) {
+            if (!modelsDirEntry.isDirectory()) continue;
+
+            Locale locale = Locale.forLanguageTag(modelsDirEntry.getName());
             List<LocalModel> models = new ArrayList<>();
-            for (File modelFolder : localeFolder.listFiles()) {
-                if (!modelFolder.isDirectory()) continue;
-                String name = modelFolder.getName();
-                LocalModel model = new LocalModel(modelFolder.getAbsolutePath(), locale, name);
-                models.add(model);
+            for (File currentModelDirEntry : modelsDirEntry.listFiles()) {
+                if (currentModelDirEntry.isDirectory()) {
+                    String name = currentModelDirEntry.getName();
+                    LocalModel model = new LocalModel(currentModelDirEntry.getAbsolutePath(), locale, name, LocalModelType.VOSK);
+                    models.add(model);
+                } else if (currentModelDirEntry.isFile() && currentModelDirEntry.getName().startsWith(GGML)) {
+                    models.add(new LocalModel(modelsDirEntry.getAbsolutePath(), locale, currentModelDirEntry.getName(), LocalModelType.WHISPER));
+                } else {
+                    // Do Nothing
+                }
             }
             localeMap.put(locale, models);
         }
@@ -115,14 +124,20 @@ public class Tools {
 
         if (!modelsDir.exists()) return models;
 
-        for (File localeFolder : modelsDir.listFiles()) {
-            if (!localeFolder.isDirectory()) continue;
-            Locale locale = Locale.forLanguageTag(localeFolder.getName());
-            for (File modelFolder : localeFolder.listFiles()) {
-                if (!modelFolder.isDirectory()) continue;
-                String name = modelFolder.getName();
-                LocalModel model = new LocalModel(modelFolder.getAbsolutePath(), locale, name);
-                models.add(model);
+        for (File modelsDirEntry : modelsDir.listFiles()) {
+            if (!modelsDirEntry.isDirectory()) continue;
+
+            Locale locale = Locale.forLanguageTag(modelsDirEntry.getName());
+            for (File currentModelDirEntry : modelsDirEntry.listFiles()) {
+                if (currentModelDirEntry.isDirectory()) {
+                    String name = currentModelDirEntry.getName();
+                    LocalModel model = new LocalModel(currentModelDirEntry.getAbsolutePath(), locale, name, LocalModelType.VOSK);
+                    models.add(model);
+                }  else if (currentModelDirEntry.isFile() && currentModelDirEntry.getName().startsWith(GGML)) {
+                    models.add(new LocalModel(currentModelDirEntry.getAbsolutePath(), locale, currentModelDirEntry.getName(), LocalModelType.WHISPER));
+                } else {
+                    // Do Nothing
+                }
             }
         }
         return models;
@@ -164,7 +179,7 @@ public class Tools {
         if (!localeDir.exists() || !modelDir.exists() || !modelDir.isDirectory()) {
             return null;
         }
-        return new LocalModel(modelDir.getAbsolutePath(), modelLink.locale, modelLink.getFilename());
+        return new LocalModel(modelDir.getAbsolutePath(), modelLink.locale, modelLink.getFilename(), modelLink.modelType);
     }
 
     public static void createNotificationChannel(Context context) {

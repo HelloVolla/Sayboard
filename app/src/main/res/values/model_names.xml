@@ -20,4 +20,14 @@
     <string name="model_hi">Hindi</string>
     <string name="model_cs">Czech</string>
     <string name="model_pl">Polish</string>
+    <string name="model_whisper_tiny_en">Whisper Tiny (English)</string>
+    <string name="model_whisper_tiny">Whisper Tiny</string>
+    <string name="model_whisper_base_en">Whisper Base (English)</string>
+    <string name="model_whisper_base">Whisper Base</string>
+    <string name="model_whisper_small_en">Whisper Small (English)</string>
+    <string name="model_whisper_small">Whisper Small</string>
+    <string name="model_whisper_medium_en">Whisper Medium (English)</string>
+    <string name="model_whisper_medium">Whisper Medium</string>
+    <string name="model_whisper_large_v1">Whisper Large V1</string>
+    <string name="model_whisper_large">Whisper Large</string>
 </resources>

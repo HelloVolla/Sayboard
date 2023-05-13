@@ -12,39 +12,55 @@ import java.util.Locale;
  *
  */
 public enum ModelLink {
-    ENGLISH_US("https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip", Locale.US, R.string.model_en_us),
-    ENGLISH_IN("https://alphacephei.com/vosk/models/vosk-model-small-en-in-0.4.zip", new Locale("en", "IN"), R.string.model_en_in),
-    CHINESE("https://alphacephei.com/vosk/models/vosk-model-small-cn-0.22.zip", Locale.CHINESE, R.string.model_cn),
-    RUSSIAN("https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip", new Locale("ru"), R.string.model_ru),
-    FRENCH("https://alphacephei.com/vosk/models/vosk-model-small-fr-0.22.zip", Locale.FRENCH, R.string.model_fr),
-    GERMAN("https://alphacephei.com/vosk/models/vosk-model-small-de-0.15.zip", Locale.GERMAN, R.string.model_de),
-    SPANISH("https://alphacephei.com/vosk/models/vosk-model-small-es-0.42.zip", new Locale("es"), R.string.model_es),
-    PORTUGUESE("https://alphacephei.com/vosk/models/vosk-model-small-pt-0.3.zip", new Locale("pt"), R.string.model_pt),
-    TURKISH("https://alphacephei.com/vosk/models/vosk-model-small-tr-0.3.zip", new Locale("tr"), R.string.model_tr),
-    VIETNAMESE("https://alphacephei.com/vosk/models/vosk-model-small-vn-0.3.zip", new Locale("vi"), R.string.model_vi),
-    ITALIAN("https://alphacephei.com/vosk/models/vosk-model-small-it-0.22.zip", Locale.ITALIAN, R.string.model_it),
-    DUTCH("https://alphacephei.com/vosk/models/vosk-model-small-nl-0.22.zip", new Locale("nl"), R.string.model_nl),
-    CATALAN("https://alphacephei.com/vosk/models/vosk-model-small-ca-0.4.zip", new Locale("ca"), R.string.model_nl),
-    PERSIAN("https://alphacephei.com/vosk/models/vosk-model-small-fa-0.4.zip", new Locale("fa"), R.string.model_fa),
-    KAZAKH("https://alphacephei.com/vosk/models/vosk-model-small-kz-0.15.zip", new Locale("kk"), R.string.model_kk),
-    JAPANESE("https://alphacephei.com/vosk/models/vosk-model-small-ja-0.22.zip", Locale.JAPANESE, R.string.model_nl),
-    ESPERANTO("https://alphacephei.com/vosk/models/vosk-model-small-eo-0.42.zip", new Locale("eo"), R.string.model_nl),
-    HINDI("https://alphacephei.com/vosk/models/vosk-model-small-hi-0.22.zip", new Locale("hi"), R.string.model_hi),
-    CZECH("https://alphacephei.com/vosk/models/vosk-model-small-cs-0.4-rhasspy.zip", new Locale("cs"), R.string.model_cs),
-    POLISH("https://alphacephei.com/vosk/models/vosk-model-small-pl-0.22.zip", new Locale("pl"), R.string.model_pl),
+    //Whisper models can be fetched from: $src/$pfx-$model.bin; models are: "tiny.en" "tiny" "base.en" "base" "small.en" "small" "medium.en" "medium" "large-v1" "large"
+    WHISPER_TINY_ENGLISH("https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en.bin", Locale.US, R.string.model_whisper_tiny_en, LocalModelType.WHISPER),
+    WHISPER_TINY("https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin", Locale.US, R.string.model_whisper_tiny, LocalModelType.WHISPER),
+    WHISPER_BASE_ENGLISH("https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin", Locale.US, R.string.model_whisper_base_en, LocalModelType.WHISPER),
+    WHISPER_BASE("https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.bin", Locale.US, R.string.model_whisper_base, LocalModelType.WHISPER),
+
+    ENGLISH_US("https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip", Locale.US, R.string.model_en_us, LocalModelType.VOSK),
+    ENGLISH_IN("https://alphacephei.com/vosk/models/vosk-model-small-en-in-0.4.zip", new Locale("en", "IN"), R.string.model_en_in, LocalModelType.VOSK),
+    CHINESE("https://alphacephei.com/vosk/models/vosk-model-small-cn-0.22.zip", Locale.CHINESE, R.string.model_cn, LocalModelType.VOSK),
+    RUSSIAN("https://alphacephei.com/vosk/models/vosk-model-small-ru-0.22.zip", new Locale("ru"), R.string.model_ru, LocalModelType.VOSK),
+    FRENCH("https://alphacephei.com/vosk/models/vosk-model-small-fr-0.22.zip", Locale.FRENCH, R.string.model_fr, LocalModelType.VOSK),
+    GERMAN("https://alphacephei.com/vosk/models/vosk-model-small-de-0.15.zip", Locale.GERMAN, R.string.model_de, LocalModelType.VOSK),
+    SPANISH("https://alphacephei.com/vosk/models/vosk-model-small-es-0.42.zip", new Locale("es"), R.string.model_es, LocalModelType.VOSK),
+    PORTUGUESE("https://alphacephei.com/vosk/models/vosk-model-small-pt-0.3.zip", new Locale("pt"), R.string.model_pt, LocalModelType.VOSK),
+    TURKISH("https://alphacephei.com/vosk/models/vosk-model-small-tr-0.3.zip", new Locale("tr"), R.string.model_tr, LocalModelType.VOSK),
+    VIETNAMESE("https://alphacephei.com/vosk/models/vosk-model-small-vn-0.3.zip", new Locale("vi"), R.string.model_vi, LocalModelType.VOSK),
+    ITALIAN("https://alphacephei.com/vosk/models/vosk-model-small-it-0.22.zip", Locale.ITALIAN, R.string.model_it, LocalModelType.VOSK),
+    DUTCH("https://alphacephei.com/vosk/models/vosk-model-small-nl-0.22.zip", new Locale("nl"), R.string.model_nl, LocalModelType.VOSK),
+    CATALAN("https://alphacephei.com/vosk/models/vosk-model-small-ca-0.4.zip", new Locale("ca"), R.string.model_nl, LocalModelType.VOSK),
+    PERSIAN("https://alphacephei.com/vosk/models/vosk-model-small-fa-0.4.zip", new Locale("fa"), R.string.model_fa, LocalModelType.VOSK),
+    KAZAKH("https://alphacephei.com/vosk/models/vosk-model-small-kz-0.15.zip", new Locale("kk"), R.string.model_kk, LocalModelType.VOSK),
+    JAPANESE("https://alphacephei.com/vosk/models/vosk-model-small-ja-0.22.zip", Locale.JAPANESE, R.string.model_nl, LocalModelType.VOSK),
+    ESPERANTO("https://alphacephei.com/vosk/models/vosk-model-small-eo-0.42.zip", new Locale("eo"), R.string.model_nl, LocalModelType.VOSK),
+    HINDI("https://alphacephei.com/vosk/models/vosk-model-small-hi-0.22.zip", new Locale("hi"), R.string.model_hi, LocalModelType.VOSK),
+    CZECH("https://alphacephei.com/vosk/models/vosk-model-small-cs-0.4-rhasspy.zip", new Locale("cs"), R.string.model_cs, LocalModelType.VOSK),
+    POLISH("https://alphacephei.com/vosk/models/vosk-model-small-pl-0.22.zip", new Locale("pl"), R.string.model_pl, LocalModelType.VOSK),
     ;
 
     public final String link;
     public final Locale locale;
     public final int name;
+    public final LocalModelType modelType;
 
-    ModelLink(String link, Locale locale, @StringRes int name) {
+    ModelLink(String link, Locale locale, @StringRes int name, LocalModelType modelType) {
         this.link = link;
         this.locale = locale;
         this.name = name;
+        this.modelType = modelType;
     }
 
     public String getFilename() {
-        return link.substring(link.lastIndexOf('/') + 1, link.lastIndexOf('.'));
+        return modelType == LocalModelType.VOSK
+               ? link.substring(link.lastIndexOf('/') + 1, link.lastIndexOf('.'))
+               : link.substring(link.lastIndexOf('/') + 1);
+    }
+
+    public String getDisplayName() {
+        return modelType == LocalModelType.VOSK
+                ? locale.getDisplayName()
+                : "Whisper (" + (link.substring(link.lastIndexOf('-') + 1, link.lastIndexOf('.'))) + ")";
     }
 }
