@@ -149,7 +149,7 @@ public class WhisperLocal implements RecognizerSource {
                 result += ' ';
             }
 
-
+            Log.i("~~~~~~~~~ Whisper", result);
             return true;
         }
 
