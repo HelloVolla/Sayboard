@@ -13,10 +13,10 @@ import java.util.Locale;
  */
 public enum ModelLink {
     //Whisper models can be fetched from: $src/$pfx-$model.bin; models are: "tiny.en" "tiny" "base.en" "base" "small.en" "small" "medium.en" "medium" "large-v1" "large"
-    WHISPER_TINY_ENGLISH("https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en.bin", Locale.US, R.string.model_whisper_tiny_en, LocalModelType.WHISPER),
-    WHISPER_TINY("https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin", Locale.US, R.string.model_whisper_tiny, LocalModelType.WHISPER),
-    WHISPER_BASE_ENGLISH("https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin", Locale.US, R.string.model_whisper_base_en, LocalModelType.WHISPER),
-    WHISPER_BASE("https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.bin", Locale.US, R.string.model_whisper_base, LocalModelType.WHISPER),
+    WHISPER_TINY_ENGLISH("https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en.bin", Locale.US, R.string.model_whisper_tiny_en, LocalModelType.WHISPER),
+    WHISPER_TINY("https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin", Locale.US, R.string.model_whisper_tiny, LocalModelType.WHISPER),
+    WHISPER_BASE_ENGLISH("https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin", Locale.US, R.string.model_whisper_base_en, LocalModelType.WHISPER),
+    WHISPER_BASE("https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin", Locale.US, R.string.model_whisper_base, LocalModelType.WHISPER),
 
     ENGLISH_US("https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip", Locale.US, R.string.model_en_us, LocalModelType.VOSK),
     ENGLISH_IN("https://alphacephei.com/vosk/models/vosk-model-small-en-in-0.4.zip", new Locale("en", "IN"), R.string.model_en_in, LocalModelType.VOSK),
