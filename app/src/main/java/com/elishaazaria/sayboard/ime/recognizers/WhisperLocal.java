@@ -88,6 +88,7 @@ public class WhisperLocal implements RecognizerSource {
 
         if (whisperContext != 0) {
             modelLoaded(whisperContext);
+            return;
         }
 
         Handler handler = new Handler(Looper.getMainLooper());
