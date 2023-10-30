@@ -20,11 +20,10 @@ import java.util.concurrent.Executor;
 
 
 class WhisperLib {
-    public static native long initContextFromInputStream(InputStream inputStream);
-    public static native long initContextFromAsset(AssetManager assetManager, String assetPath);
     public static native long initContext(String modelPath);
     public static native void freeContext(long contextPtr);
-    public static native void fullTranscribe(long contextPtr, float[] audioData);
+    public static native boolean acceptAudio(long contextPtr, float[] audioData);
+    public static native void transcribe(long contextPtr);
     public static native int getTextSegmentCount(long contextPtr);
     public static native String getTextSegment(long contextPtr, int index);
     public static native int getSampleRate();
@@ -136,11 +135,27 @@ public class WhisperLocal implements RecognizerSource {
             for (int i = 0; i < buffer.length; i++) {
                 floatBuffer[i] = ((float)buffer[i]) / 32767.0f;
             }
+            return WhisperLib.acceptAudio(whisperContext, floatBuffer);
+        }
 
-            // TODO: Expose additional functions in WhisperLib that allow
-            // partial translations and correcting history and
-            // show alternative translations
-            WhisperLib.fullTranscribe(whisperContext, floatBuffer);
+        @Override
+        public String getResult() {
+            WhisperLib.transcribe(whisperContext);
+
+            int textSegmentCount = WhisperLib.getTextSegmentCount(whisperContext);
+            // TODO: Use StringBuilder here
+            for (int i = 0; i < textSegmentCount; i++) {
+                result += WhisperLib.getTextSegment(whisperContext, i);
+                result += ' ';
+            }
+            return result;
+        }
+
+        @Override
+        public String getPartialResult() {
+            return "";
+            /*
+            WhisperLib.transcribe(whisperContext);
 
             int textSegmentCount = WhisperLib.getTextSegmentCount(whisperContext);
             // TODO: Use StringBuilder here
@@ -149,18 +164,8 @@ public class WhisperLocal implements RecognizerSource {
                 result += ' ';
             }
 
-            Log.i("~~~~~~~~~ Whisper", result);
-            return true;
-        }
-
-        @Override
-        public String getResult() {
             return result;
-        }
-
-        @Override
-        public String getPartialResult() {
-            return result;
+             */
         }
 
         @Override

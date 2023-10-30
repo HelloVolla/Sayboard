@@ -16,9 +16,10 @@ struct SayboardWhisperContext {
     int n_samples_step;
     int n_samples_len;
     int n_samples_keep;
-    int n_samples_30s;
+
     std::vector<float> pcmf32;
     std::vector<float> pcmf32_old;
+    std::vector<float> pcmf32_new;
     std::vector<whisper_token> prompt_tokens;
     struct whisper_full_params wparams;
 };
@@ -27,13 +28,13 @@ struct SayboardWhisperContext* SayboardWhisperContextInit(const char *model_path
     struct SayboardWhisperContext *context = new SayboardWhisperContext();
     context->ctx = whisper_init_from_file(model_path);
     context->step_ms    = 3000;
-    context->length_ms  = 10000;
+    //context->length_ms  = 10000;
+    context->length_ms  = 6000;
     context->keep_ms    = 200;
     context->n_samples_step = (1e-3*context->step_ms)*WHISPER_SAMPLE_RATE;
     context->n_samples_len  = (1e-3*context->length_ms)*WHISPER_SAMPLE_RATE;
     context->n_samples_keep = (1e-3*context->keep_ms  )*WHISPER_SAMPLE_RATE;
-    context->n_samples_30s  = (1e-3*30000.0         )*WHISPER_SAMPLE_RATE;
-    context->pcmf32 = std::vector<float>(context->n_samples_30s, 0.0f);
+
     //TODO: Later on enable voice activity detection
     const bool use_vad = false;
     const int max_tokens = 32;
@@ -42,7 +43,7 @@ struct SayboardWhisperContext* SayboardWhisperContextInit(const char *model_path
 
     context->wparams.print_progress   = false;
     context->wparams.print_special    = false;
-    context-> wparams.print_realtime   = false;
+    context->wparams.print_realtime   = false;
     context->wparams.print_timestamps = false;
     context->wparams.translate        = false;
     context->wparams.single_segment   = !use_vad;
@@ -58,9 +59,10 @@ struct SayboardWhisperContext* SayboardWhisperContextInit(const char *model_path
     // disable temperature fallback
     //wparams.temperature_inc  = -1.0f;
 
-    // Add context from keyboard later on
-    context->wparams.prompt_tokens    = 0; //params.no_context ? nullptr : prompt_tokens.data();
-    context->wparams.prompt_n_tokens  = 0; //params.no_context ? 0       : prompt_tokens.size();
+    // Add context from keyboard, based on the previous recognized sentence
+    context->wparams.prompt_tokens    = context->prompt_tokens.data();
+    context->wparams.prompt_n_tokens  = context->prompt_tokens.size();
+
     return context;
 }
 
@@ -90,11 +92,16 @@ bool SayboardWhisperContextAcceptAudio(struct SayboardWhisperContext *context,
         return false;
     }
 
-    if (audio_samples_size >= context->n_samples_step) {
-        return true;
+    size_t currentSamplesCount = context->pcmf32_new.size();
+    context->pcmf32_new.resize(currentSamplesCount + audio_samples_size);
+    memcpy(context->pcmf32_new.data() + currentSamplesCount, audio_samples, audio_samples_size);
+
+    if (context->pcmf32_new.size() < context->n_samples_step) {
+        LOGI("Audio Samples not enough (%d): %d", context->n_samples_step, context->pcmf32_new.size());
+        return false;
     }
 
-    const int n_samples_new = audio_samples_size;
+    const int n_samples_new = context->pcmf32_new.size();
     const int n_samples_take = min((int) context->pcmf32_old.size(),
                                    max(0,
                                        context->n_samples_keep + context->n_samples_len - n_samples_new));
@@ -104,8 +111,10 @@ bool SayboardWhisperContextAcceptAudio(struct SayboardWhisperContext *context,
         context->pcmf32[i] = context->pcmf32_old[context->pcmf32_old.size() - n_samples_take + i];
     }
 
-    memcpy(context->pcmf32.data() + n_samples_take, audio_samples, n_samples_new*sizeof(float));
+    memcpy(context->pcmf32.data() + n_samples_take, context->pcmf32_new.data(), n_samples_new*sizeof(float));
     context->pcmf32_old = context->pcmf32;
+    context->pcmf32_new.clear();
+
     return true;
 }
 
@@ -114,15 +123,27 @@ bool SayboardWhisperContextTranscribe(struct SayboardWhisperContext *context) {
         return false;
     }
 
+    bool result = true;
     if (whisper_full(context->ctx,
                      context->wparams,
                      context->pcmf32.data(),
-                     context->pcmf32.size()) != 0) {
+                     context->pcmf32.size()) == 0) {
+        context->prompt_tokens.clear();
+        const int n_segments = whisper_full_n_segments(context->ctx);
+        for (int i = 0; i < n_segments; ++i) {
+            const int token_count = whisper_full_n_tokens(context->ctx, i);
+            for (int j = 0; j < token_count; ++j) {
+                context->prompt_tokens.push_back(whisper_full_get_token_id(context->ctx, i, j));
+            }
+        }
+        context->wparams.prompt_tokens    = context->prompt_tokens.data();
+        context->wparams.prompt_n_tokens  = context->prompt_tokens.size();
+    } else {
         LOGW("Failed to transcribe audio");
-        return false;
+        result = false;
     }
 
-    return true;
+    return result;
 }
 
 int SayboardWhisperContextGetTextSegmentCount(struct SayboardWhisperContext *context) {

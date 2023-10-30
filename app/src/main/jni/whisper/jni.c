@@ -28,25 +28,29 @@ Java_com_elishaazaria_sayboard_ime_recognizers_WhisperLib_freeContext(
     SayboardWhisperContextDestroy((struct SayboardWhisperContext*)context_ptr);
 }
 
-JNIEXPORT void JNICALL
-Java_com_elishaazaria_sayboard_ime_recognizers_WhisperLib_fullTranscribe(
+JNIEXPORT jboolean JNICALL
+Java_com_elishaazaria_sayboard_ime_recognizers_WhisperLib_acceptAudio(
         JNIEnv *env, jobject thiz, jlong context_ptr, jfloatArray audio_data) {
     UNUSED(thiz);
-    struct whisper_context *context = (struct whisper_context *) context_ptr;
     jfloat *audio_data_arr = (*env)->GetFloatArrayElements(env, audio_data, NULL);
     const jsize audio_data_length = (*env)->GetArrayLength(env, audio_data);
 
-
     // get audio samples
-
-    if (SayboardWhisperContextAcceptAudio((struct SayboardWhisperContext*) context_ptr,
+    jboolean result = SayboardWhisperContextAcceptAudio((struct SayboardWhisperContext*) context_ptr,
             audio_data_arr,
-            audio_data_length))
-    {
-        SayboardWhisperContextTranscribe((struct SayboardWhisperContext*) context_ptr);
-    }
+            audio_data_length);
 
     (*env)->ReleaseFloatArrayElements(env, audio_data, audio_data_arr, JNI_ABORT);
+    return result;
+}
+
+JNIEXPORT void JNICALL
+Java_com_elishaazaria_sayboard_ime_recognizers_WhisperLib_transcribe(
+        JNIEnv *env, jobject thiz, jlong context_ptr) {
+    UNUSED(thiz);
+
+    // get audio samples
+    SayboardWhisperContextTranscribe((struct SayboardWhisperContext*) context_ptr);
 }
 
 JNIEXPORT jint JNICALL
