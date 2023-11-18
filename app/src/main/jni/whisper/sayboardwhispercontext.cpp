@@ -6,7 +6,11 @@ extern "C"{
 
 #include "whisper.h"
 #include "../../../../../thirdparty/whisper.cpp/whisper.h"
+#include "../../../../../thirdparty/whisper.cpp/examples/common.h"
 
+#include<arpa/inet.h>
+#include<sys/socket.h>
+#include <unistd.h>
 
 struct SayboardWhisperContext {
     struct whisper_context *ctx;
@@ -22,14 +26,19 @@ struct SayboardWhisperContext {
     std::vector<float> pcmf32_new;
     std::vector<whisper_token> prompt_tokens;
     struct whisper_full_params wparams;
+
+    int sockfd;
+    struct sockaddr_in servaddr;
 };
 
 struct SayboardWhisperContext* SayboardWhisperContextInit(const char *model_path, int max_threads) {
     struct SayboardWhisperContext *context = new SayboardWhisperContext();
-    context->ctx = whisper_init_from_file(model_path);
+    struct whisper_context_params cparams;
+    cparams.use_gpu = false;
+    context->ctx = whisper_init_from_file_with_params(model_path, cparams);
     context->step_ms    = 3000;
-    //context->length_ms  = 10000;
-    context->length_ms  = 6000;
+    context->length_ms  = 10000;
+    //context->length_ms  = 6000;
     context->keep_ms    = 200;
     context->n_samples_step = (1e-3*context->step_ms)*WHISPER_SAMPLE_RATE;
     context->n_samples_len  = (1e-3*context->length_ms)*WHISPER_SAMPLE_RATE;
@@ -97,7 +106,7 @@ bool SayboardWhisperContextAcceptAudio(struct SayboardWhisperContext *context,
     memcpy(context->pcmf32_new.data() + currentSamplesCount, audio_samples, audio_samples_size);
 
     if (context->pcmf32_new.size() < context->n_samples_step) {
-        LOGI("Audio Samples not enough (%d): %d", context->n_samples_step, context->pcmf32_new.size());
+        LOGI("Audio Samples not enough (%d): %lu", context->n_samples_step, context->pcmf32_new.size());
         return false;
     }
 
@@ -138,6 +147,7 @@ bool SayboardWhisperContextTranscribe(struct SayboardWhisperContext *context) {
         }
         context->wparams.prompt_tokens    = context->prompt_tokens.data();
         context->wparams.prompt_n_tokens  = context->prompt_tokens.size();
+        context->pcmf32_old = std::vector<float>(context->pcmf32.end() - context->n_samples_keep, context->pcmf32.end());
     } else {
         LOGW("Failed to transcribe audio");
         result = false;

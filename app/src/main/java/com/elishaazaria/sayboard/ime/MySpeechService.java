@@ -4,6 +4,7 @@
 
 package com.elishaazaria.sayboard.ime;
 
+import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Handler;
@@ -31,7 +32,7 @@ public class MySpeechService {
         this.recognizer = recognizer;
         this.sampleRate = (int) sampleRate;
         this.bufferSize = Math.round((float) this.sampleRate * BUFFER_SIZE_SECONDS);
-        this.recorder = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION, this.sampleRate, 16, 2, this.bufferSize * 2);
+        this.recorder = new AudioRecord(MediaRecorder.AudioSource.VOICE_RECOGNITION, this.sampleRate, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT, this.bufferSize * 4);
         if (this.recorder.getState() == 0) {
             this.recorder.release();
             throw new IOException("Failed to initialize recorder. Microphone might be already in use.");
