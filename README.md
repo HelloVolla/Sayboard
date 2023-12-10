@@ -1,12 +1,6 @@
-<img align="left" width="80" height="80"
-src="app/src/main/ic_launcher-playstore.png" alt="App icon">
-[<img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png"
-    alt="Get it on F-Droid"
-    height="80">](https://f-droid.org/en/packages/com.elishaazaria.sayboard/)
+# Vollaboard
 
-
-# Sayboard
-
+This project is a fork of https://github.com/ElishaAz/Sayboard .
 This project provides a voice keyboard using [Vosk](https://alphacephei.com/vosk/android).
 It is based on [https://github.com/Felicis/vosk-android-demo](https://github.com/Felicis/vosk-android-demo).
 

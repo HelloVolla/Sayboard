@@ -7,7 +7,7 @@ apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
 android {
     compileSdk 34
     defaultConfig {
-        applicationId "com.elishaazaria.sayboard"
+        applicationId "com.volla.vollaboard"
         minSdkVersion 23
         targetSdkVersion 33
         versionCode 401010
@@ -52,7 +52,7 @@ android {
         kotlinCompilerExtensionVersion = "1.5.3"
     }
 
-    namespace 'com.elishaazaria.sayboard'
+    namespace 'com.volla.vollaboard'
 
     packagingOptions {
         resources {
