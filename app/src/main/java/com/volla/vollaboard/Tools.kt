@@ -10,14 +10,15 @@ import android.os.Build
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import com.volla.vollaboard.data.InstalledModelReference
-import com.volla.vollaboard.data.VoskLocalModel
+import com.volla.vollaboard.data.LocalModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
-import java.util.*
+import java.util.Locale
 
 object Tools {
     const val VOSK_SERVER_ENABLED = false
+    const val WHISPER_LOCAL_ENABLED = true
 
     @JvmStatic
     fun isMicrophonePermissionGranted(activity: Activity): Boolean {
@@ -57,13 +58,13 @@ object Tools {
 
     fun getVoskModelFromReference(
         reference: InstalledModelReference
-    ): VoskLocalModel? {
+    ): LocalModel? {
         val localeFolder = File(reference.path).parentFile ?: return null
         val locale = Locale.forLanguageTag(localeFolder.name)
         for (modelFolder in localeFolder.listFiles()!!) {
             if (!modelFolder.isDirectory) continue
             val name = modelFolder.name
-            val model = VoskLocalModel(modelFolder.absolutePath, locale, name)
+            val model = LocalModel(modelFolder.absolutePath, locale, name, reference.type)
             return model
         }
         return null

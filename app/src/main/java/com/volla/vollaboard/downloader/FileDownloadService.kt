@@ -22,9 +22,11 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.*
 import java.net.URL
+import java.nio.channels.FileChannel
 import java.util.*
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+
 
 class FileDownloadService : Service() {
     private val executor: Executor = Executors.newSingleThreadExecutor()
@@ -85,7 +87,7 @@ class FileDownloadService : Service() {
         val file = getTemporaryDownloadLocation(this, filename)
         Tools.copyStreamToFile(contentResolver!!.openInputStream(uri)!!, file)
         unzipProgress = 0f
-        currentModel = ModelInfo(uri.toString(), file.name)
+        currentModel = ModelInfo(uri.toString(), file.name, file.name)
         setState(State.NONE)
         unzipFile(file)
         if (interrupt) {
@@ -124,13 +126,32 @@ class FileDownloadService : Service() {
             return
         }
         Log.d(TAG, "Finished downloading")
-        try {
-            unzipFile(downloadLocation)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            setError(e.message)
-            mainEnd()
-            return
+
+        if (downloadLocation.path.endsWith(".zip")) {
+            try {
+                unzipFile(downloadLocation)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                setError(e.message)
+                mainEnd()
+                return
+            }
+            Log.d(TAG, "Finished unzipping")
+            downloadLocation.delete()
+        } else {
+            val modelDestinationDirectory =
+                Constants.getDirectoryForModel(applicationContext, currentModel!!.locale)
+            if (!modelDestinationDirectory.exists()) {
+                modelDestinationDirectory.mkdirs()
+            }
+            try {
+                moveFile(downloadLocation, modelDestinationDirectory)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                setError(e.message)
+                mainEnd()
+                return
+            }
         }
         if (interrupt) {
             interrupted(downloadLocation)
@@ -140,6 +161,23 @@ class FileDownloadService : Service() {
         setState(State.FINISHED)
         Log.d(TAG, "Finished processing $currentModel")
         mainEnd()
+    }
+
+    @Throws(IOException::class)
+    private fun moveFile(file: File, dir: File) {
+        val newFile = File(dir, file.name)
+        var outputChannel: FileChannel? = null
+        var inputChannel: FileChannel? = null
+        try {
+            outputChannel = FileOutputStream(newFile).channel
+            inputChannel = FileInputStream(file).channel
+            inputChannel.transferTo(0, inputChannel.size(), outputChannel)
+            inputChannel.close()
+            file.delete()
+        } finally {
+            inputChannel?.close()
+            outputChannel?.close()
+        }
     }
 
     private fun interrupted(downloadLocation: File?) {

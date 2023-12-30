@@ -5,14 +5,14 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.volla.vollaboard.data.VoskLocalModel
+import com.volla.vollaboard.data.LocalModel
 import org.json.JSONException
 import org.json.JSONObject
 import org.vosk.Model
 import java.util.concurrent.Executor
 import java.util.Locale
 
-class VoskLocal(private val localModel: VoskLocalModel) : RecognizerSource {
+class VoskLocal(private val localModel: LocalModel) : RecognizerSource {
     private val stateMLD = MutableLiveData(RecognizerState.NONE)
     override val stateLD: LiveData<RecognizerState>
         get() = stateMLD

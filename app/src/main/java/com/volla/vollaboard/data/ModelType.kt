@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 enum class ModelType {
-    VoskLocal
+    VoskLocal,
+    WhisperLocal
 }

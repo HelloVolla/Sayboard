@@ -16,12 +16,14 @@ object FileDownloader {
     const val DOWNLOAD_URL = "download_url"
     const val DOWNLOAD_FILENAME = "download_filename"
     const val DOWNLOAD_LOCALE = "download_locale"
+    const val DOWNLOAD_DISPLAYNAME = "download_displayname"
 
     const val UNZIP_URI = "unzip_uri"
     const val UNZIP_LOCALE = "unzip_locale"
     fun getInfoForIntent(intent: Intent): ModelInfo? {
         val url = intent.getStringExtra(DOWNLOAD_URL)
         val filename = intent.getStringExtra(DOWNLOAD_FILENAME)
+        val displayname = intent.getStringExtra(DOWNLOAD_DISPLAYNAME)!!
         val locale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent.getSerializableExtra(DOWNLOAD_LOCALE, Locale::class.java)
         } else {
@@ -30,6 +32,7 @@ object FileDownloader {
         return if (url == null || filename == null || locale == null) null else ModelInfo(
             url,
             filename,
+            displayname,
             locale
         )
     }
@@ -42,6 +45,7 @@ object FileDownloader {
         serviceIntent.putExtra(DOWNLOAD_URL, model.link)
         serviceIntent.putExtra(DOWNLOAD_FILENAME, model.filename)
         serviceIntent.putExtra(DOWNLOAD_LOCALE, model.locale)
+        serviceIntent.putExtra(DOWNLOAD_DISPLAYNAME, model.displayname)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(serviceIntent)
         } else {
@@ -50,6 +54,7 @@ object FileDownloader {
     }
 
     fun importModel(uri: Uri, context: Context) {
+        // TODO: Add Whisper import logic
         var context = context
         context = context.applicationContext
         val serviceIntent = Intent(context, FileDownloadService::class.java)

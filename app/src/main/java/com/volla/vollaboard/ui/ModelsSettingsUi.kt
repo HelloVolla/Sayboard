@@ -227,7 +227,7 @@ class ModelsSettingsUi(private val activity: SettingsActivity) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Column(modifier = Modifier.weight(1f)) {
-                                Text(text = it.locale.displayName, fontSize = 20.sp)
+                                Text(text = it.displayname, fontSize = 20.sp)
                                 Text(text = it.url, fontSize = 12.sp)
                                 Text(
                                     text = stringResource(id = R.string.models_pending_download_state),
@@ -375,7 +375,7 @@ class ModelsSettingsUi(private val activity: SettingsActivity) {
                                     .background(MaterialTheme.colors.onSurface.copy(0.2f))
                                     .padding(10.dp)
                             ) {
-                                Text(text = ml.locale.displayName)
+                                Text(text = ml.displayname)
                                 Text(text = ml.link, fontSize = 10.sp)
                             }
                         }

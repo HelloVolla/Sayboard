@@ -3,16 +3,17 @@ package com.volla.vollaboard.data
 import java.io.Serializable
 import java.util.*
 
-data class VoskLocalModel(val path: String, val locale: Locale, val filename: String) : Serializable {
+data class LocalModel(val path: String, val locale: Locale, val filename: String, val modelType: ModelType) : Serializable {
 
     companion object {
-        fun serialize(model: VoskLocalModel): String {
+        fun serialize(model: LocalModel): String {
             return "[path:\"" + encode(model.path) +
                     "\", locale:\"" + model.locale +
+                    "\", modeltype:\"" + (if (model.modelType == ModelType.VoskLocal) "VoskLocal" else "WhisperLocal") +
                     "\", name:\"" + encode(model.filename) + "\"]"
         }
 
-        fun deserialize(serialized: String?): VoskLocalModel {
+        fun deserialize(serialized: String?): LocalModel {
 
             throw RuntimeException() // TODO: implement
         }
