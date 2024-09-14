@@ -4,7 +4,7 @@
     <string name="mic_info_error">Tuccḍa</string>
     <string name="mic_info_error_failed">Failed to initialize recognizer %s</string>
     <string name="mic_info_ready">Yewjed</string>
-    <string name="app_name">Sayboard</string>
+    <string name="app_name">Vollaboard</string>
     <string name="logic_auto_capitalize_summary">Automatically capitalize the first letter after a period (where applicable).</string>
     <string name="models_import_dialog_text_after_link">- make sure to pick a small model - and then choose it in the file picker after pressing import</string>
     <string name="models_import_dialog_text_before_link">Manually download a Vosk model from</string>

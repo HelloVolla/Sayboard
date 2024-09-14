@@ -7,11 +7,11 @@ apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
 android {
     compileSdk 34
     defaultConfig {
-        applicationId "com.elishaazaria.sayboard"
+        applicationId "com.volla.vollaboard"
         minSdkVersion 23
-        targetSdkVersion 33
+        targetSdkVersion 35
         versionCode 402010
-        versionName "v4.2.1"
+        versionName "v4.2.2"
         ndkVersion "r25c"
     }
     buildTypes {
@@ -34,7 +34,7 @@ android {
         variant.outputs.configureEach { output ->
 //            output.outputFileName = "${variant.getFlavorName()}-${variant.buildType.name}-v${versionCode}_${versionName}-${new Date().format('ddMMMyyyy_HH-mm')}-${output.getFilter(com.android.build.OutputFile.ABI)}.apk"
             var abi_name = output.getFilter(output.ABI) ? output.getFilter(output.ABI) : "Universal"
-            output.outputFileName = "Sayboard_${abi_name}.apk"
+            output.outputFileName = "Vollaboard_${abi_name}.apk"
         }
     }
 
@@ -53,7 +53,7 @@ android {
         kotlinCompilerExtensionVersion = "1.5.3"
     }
 
-    namespace 'com.elishaazaria.sayboard'
+    namespace 'com.volla.vollaboard'
 
     packagingOptions {
         resources {

@@ -81,7 +81,7 @@
     <string name="keyboard_keys_dialog_key_entry">Label: %1$s, Text: %2$s</string>
     <string name="title_keyboard">لوحة المفاتيح</string>
     <string name="mic_error_no_recognizers">No Recognizers installed!</string>
-    <string name="app_name">Sayboard</string>
+    <string name="app_name">Vollaboard</string>
     <string name="models_model_display_name_null">Null</string>
     <string name="models_download_state_unzip_started">فك الضغط جارٍ…</string>
     <string name="switch_keyboard">Switch Keyboard</string>

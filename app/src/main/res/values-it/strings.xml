@@ -81,7 +81,7 @@
     <string name="keyboard_keys_dialog_key_entry">Etichetta: %1$s, Testo: %2$s</string>
     <string name="title_keyboard">Tastiera</string>
     <string name="mic_error_no_recognizers">Nessun modello di riconoscimento installato!</string>
-    <string name="app_name">Sayboard</string>
+    <string name="app_name">Vollaboard</string>
     <string name="models_model_display_name_null">Null</string>
     <string name="models_download_state_unzip_started">Decompressione in corso</string>
     <string name="switch_keyboard">Cambia tastiera</string>
