@@ -8,6 +8,11 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+      <!-- From targetSdkVersion >= 34, the foregroundServiceType="microphone" requires additional permissions that must be explicitly declared in the manifest. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" /> <!-- New permission added -->
+
 
     <!--  The app calling the SpeechRecognitionService gets ERROR_INSUFFICIENT_PERMISSIONS if we can't query for them (even if they have microphone permission) -->
     <uses-permission
