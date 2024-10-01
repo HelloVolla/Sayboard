@@ -13,6 +13,7 @@ android {
         versionCode 402010
         versionName "v4.2.2"
         ndkVersion "r25c"
+        abiFilters "arm64-v8a"
     }
     buildTypes {
         release {
