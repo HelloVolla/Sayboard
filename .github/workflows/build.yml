@@ -45,32 +45,32 @@ jobs:
         uses: android-actions/setup-android@v2
         with:
           api-level: 33
-          build-tools: 33.0.0  # Specify the required build-tools version
+          build-tools: 33.0.0
 
-      - name: Sign app APK
-        uses: r0adkll/sign-android-release@v1
-        id: sign_app
-        with:
-          releaseDirectory: ./releases
-          signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE_FILE_CONTENTS }}
-          alias: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
-          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASS }}
-          keyPassword: ${{ secrets.ANDROID_KEYSTORE_PASS }}
+      - name: Align APK
+        run: |
+          ${ANDROID_HOME}/build-tools/33.0.0/zipalign -v 4 releases/com.volla.vollaboard.apk releases/com.volla.vollaboard-aligned.apk
+        shell: bash
+
+      - name: Sign APK manually
+        run: |
+          ${ANDROID_HOME}/build-tools/33.0.0/apksigner sign --ks keystore.jks --ks-key-alias ${{ secrets.ANDROID_KEYSTORE_ALIAS }} --ks-pass pass:${{ secrets.ANDROID_KEYSTORE_PASS }} --key-pass pass:${{ secrets.ANDROID_KEYSTORE_PASS }} --out releases/com.volla.vollaboard-signed.apk releases/com.volla.vollaboard-aligned.apk
+        shell: bash
 
       - uses: actions/upload-artifact@v3
         with:
-          name: com.volla.vollaboard.apk
-          path: ${{ steps.sign_app.outputs.signedApk }}
-
+          name: com.volla.vollaboard-signed.apk
+          path: releases/com.volla.vollaboard-signed.apk
+          
       - name: Upload Apk to Nightly Repository
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/volla-14' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
         uses: wlixcc/SFTP-Deploy-Action@v1.0
         with:
           username: 'drone'
           server: 'volla.tech'
           port: 22
           ssh_private_key: '${{ secrets.FDROID_DEPLOY_KEY }}'
-          local_path: ${{ steps.sign_app.outputs.signedApk }}
+          local_path: releases/com.volla.vollaboard-signed.apk
           remote_path: '/fdroid-nightly.volla.tech/builds/volla/vollaboard/'
           args: '-o CheckHostIP=no -o StrictHostKeyChecking=no'
 
@@ -82,6 +82,6 @@ jobs:
           server: 'volla.tech'
           port: 22
           ssh_private_key: '${{ secrets.FDROID_DEPLOY_KEY }}'
-          local_path: ${{ steps.sign_app.outputs.signedApk }}
+          local_path: releases/com.volla.vollaboard-signed.apk
           remote_path: '/fdroid.volla.tech/builds/volla/vollaboard/'
           args: '-o CheckHostIP=no -o StrictHostKeyChecking=no'
