@@ -47,6 +47,11 @@ jobs:
           api-level: 33
           build-tools: 33.0.0
 
+      # Decode the base64 keystore and save it as keystore.jks
+      - name: Create keystore file from base64
+        run: |
+          echo "${{ secrets.ANDROID_KEYSTORE_FILE_CONTENTS }}" | base64 --decode > keystore.jks
+
       - name: Align APK
         run: |
           ${ANDROID_HOME}/build-tools/33.0.0/zipalign -v 4 releases/com.volla.vollaboard.apk releases/com.volla.vollaboard-aligned.apk
@@ -63,7 +68,7 @@ jobs:
           path: releases/com.volla.vollaboard-signed.apk
           
       - name: Upload Apk to Nightly Repository
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/volla-14' }}
         uses: wlixcc/SFTP-Deploy-Action@v1.0
         with:
           username: 'drone'
