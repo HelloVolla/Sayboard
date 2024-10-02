@@ -38,7 +38,7 @@ jobs:
         run: |
           ./gradlew build
           mkdir -p releases
-          find app/build/ -type f -name "*.apk" -exec mv {} releases/com.volla.vollaboard.apk \;
+          find app/build/ -type f -name "Vollaboard_Universal.apk" -exec mv {} releases/com.volla.vollaboard.apk \;
           ls -l releases
 
       - name: Install Android SDK Build-Tools
@@ -68,7 +68,7 @@ jobs:
           path: releases/com.volla.vollaboard-signed.apk
           
       - name: Upload Apk to Nightly Repository
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/volla-14' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: wlixcc/SFTP-Deploy-Action@v1.0
         with:
           username: 'drone'
