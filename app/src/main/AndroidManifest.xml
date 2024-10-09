@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.volla.vollaboard">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-      <!-- From targetSdkVersion >= 34, the foregroundServiceType="microphone" requires additional permissions that must be explicitly declared in the manifest. -->
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" /> <!-- New permission added -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC"/>
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
 
     <!--  The app calling the SpeechRecognitionService gets ERROR_INSUFFICIENT_PERMISSIONS if we can't query for them (even if they have microphone permission) -->
     <uses-permission
@@ -63,10 +63,11 @@
         <activity
             android:name="com.volla.vollaboard.SettingsActivity"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -75,7 +76,9 @@
 
         <service
             android:name="com.volla.vollaboard.downloader.FileDownloadService"
-            android:enabled="true" />
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType= "dataSync"/>
     </application>
 
 </manifest>
